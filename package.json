@@ -1,0 +1,20 @@
+{
+  "name": "t11e-appcore",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+  },
+  "main": "index.js",
+  "dependencies": {
+    "bluebird": "^2.3.11",
+    "debug": "^2.1.0",
+    "events": "^1.0.2",
+    "flux": "^2.0.1",
+    "react": "~0.12.1",
+    "underscore": "~1.7.0"
+  },
+  "devDependencies": {
+  },
+  "browser": {
+  }
+}
