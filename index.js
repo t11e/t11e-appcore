@@ -1,3 +1,4 @@
 module.exports = {
-  ApplicationDispatcher: require('./lib/ApplicationDispatcher')
+  Router: require('./lib/Router'),
+  ApplicationDispatcher: require('./lib/react/ApplicationDispatcher')
 };
