@@ -33,6 +33,9 @@ var ApplicationDispatcher = require('./ApplicationDispatcher');
 //
 // * `getTitle()` — return a title specific to the current state.
 //
+// * `shouldTrackScrollTop()` — return true if the router should preserve the
+//   scroll state of this view.
+//
 var RouterMixin = {
 
   mixins: [WindowScrollEventMixin],
