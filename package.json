@@ -11,7 +11,7 @@
     "dom-event": "0.0.4",
     "events": "^1.0.2",
     "flux": "^2.0.1",
-    "route-recognizer": "^0.1.0",
+    "route-recognizer": "^0.1.4",
     "react": "~0.12.1",
     "underscore": "~1.7.0"
   },
