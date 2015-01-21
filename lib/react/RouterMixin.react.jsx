@@ -25,6 +25,9 @@ var ApplicationDispatcher = require('./ApplicationDispatcher');
 //
 // * `buildTitle(title)` to build a document title.
 //
+// * `shouldViewTrackScrollTop(viewName)` — return true if the router should
+//   preserve the scroll state of this view.
+//
 // In addition, in order to perform routing, the embedding component must
 // listen to navigation events call `onNavigate(event)` and `onNotFound(event)` on
 // itself. These are events emitted by `Router`.
@@ -32,9 +35,6 @@ var ApplicationDispatcher = require('./ApplicationDispatcher');
 // The embedded route view itself may support these methods:
 //
 // * `getTitle()` — return a title specific to the current state.
-//
-// * `shouldTrackScrollTop()` — return true if the router should preserve the
-//   scroll state of this view.
 //
 var RouterMixin = {
 
@@ -123,9 +123,13 @@ var RouterMixin = {
       return;
     }
 
-    var newScrollTop = event.scrollTop ||
-      ((view.shouldTrackScrollTop && view.shouldTrackScrollTop()) ?
-        this.state.scrollTops[viewName] : null) || 0;
+    var newScrollTop;
+    if (this.shouldViewTrackScrollTop && this.shouldViewTrackScrollTop(viewName)) {
+      newScrollTop = (event.scrollTop !== undefined && event.scrollTop !== null) ?
+        event.scrollTop : this.state.scrollTops[viewName];
+    } else {
+      newScrollTop = 0;
+    }
 
     var newScrollTops = _.clone(this.state.scrollTops);
     newScrollTops[viewName] = newScrollTop;
