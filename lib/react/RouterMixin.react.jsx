@@ -6,7 +6,6 @@ var React = require('react');
 var _ = require('underscore');
 var DOMUtils = require('t11e-utils').DOMUtils;
 
-var WindowScrollEventMixin = require('./WindowScrollEventMixin');
 var ApplicationDispatcher = require('./ApplicationDispatcher');
 
 // A mixin for handling routing. The component must implement:
@@ -38,8 +37,6 @@ var ApplicationDispatcher = require('./ApplicationDispatcher');
 //
 var RouterMixin = {
 
-  mixins: [WindowScrollEventMixin],
-
   getInitialState: function() {
     return {
       status: 'loading',
@@ -47,6 +44,15 @@ var RouterMixin = {
       viewComponent: null,
       scrollTops: {}
     };
+  },
+
+  componentDidMount: function() {
+    domEvent.on(window, 'scroll', this._handleWindowScroll);
+    this._handleWindowScroll();
+  },
+
+  componentWillMount: function() {
+    domEvent.off(window, 'scroll', this._handleWindowScroll);
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -141,6 +147,10 @@ var RouterMixin = {
       status: 'loaded',
       scrollTops: newScrollTops
     });
+  },
+
+  _handleWindowScroll: function(/* event */) {
+    this.setState({windowScrollTop: DOMUtils.getWindowScrollTop()});
   },
 
   _updateScrollTop: function() {
