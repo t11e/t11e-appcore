@@ -20,6 +20,6 @@
   "browser": {
   },
   "browserify": {
-    "transform": ["reactify"]
+    "transform": ["babelify"]
   }
 }
