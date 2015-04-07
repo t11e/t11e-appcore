@@ -15,6 +15,9 @@
     "react": ">=0.12.1, <0.13",
     "underscore": "=1.7.0"
   },
+  "optionalDependencies": {
+    "node-sass": ">= 0.0"
+  },
   "devDependencies": {
   },
   "browser": {
