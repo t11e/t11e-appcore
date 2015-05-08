@@ -16,7 +16,7 @@
     "underscore": "=1.7.0"
   },
   "optionalDependencies": {
-    "node-sass": ">= 0.0"
+    "node-sass": ">= 3.0"
   },
   "devDependencies": {
   },
