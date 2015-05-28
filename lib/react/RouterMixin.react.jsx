@@ -1,12 +1,13 @@
 'use strict';
 
-var domEvent = require('dom-event');
-var debug = require('debug')('RouterMixin');
-var React = require('react');
-var _ = require('underscore');
-var DOMUtils = require('t11e-utils').DOMUtils;
+import domEvent from 'dom-event';
+import React from 'react';
+import {clone, extend} from 'underscore';
+import {DOMUtils} from 't11e-utils';
 
-var ApplicationDispatcher = require('./ApplicationDispatcher');
+import ApplicationDispatcher from './ApplicationDispatcher';
+
+const debug = require('debug')('RouterMixin');
 
 // A mixin for handling routing. The component must implement:
 //
@@ -35,9 +36,9 @@ var ApplicationDispatcher = require('./ApplicationDispatcher');
 //
 // * `getTitle()` — return a title specific to the current state.
 //
-var RouterMixin = {
+let RouterMixin = {
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       status: 'loading',
       viewName: null,
@@ -46,33 +47,33 @@ var RouterMixin = {
     };
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     domEvent.on(window, 'scroll', this._handleWindowScroll);
     this._handleWindowScroll();
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     domEvent.off(window, 'scroll', this._handleWindowScroll);
   },
 
-  componentDidUpdate: function(prevProps, prevState) {
-    var viewName = this.state.viewName;
+  componentDidUpdate(prevProps, prevState) {
+    let viewName = this.state.viewName;
     if (viewName !== prevState.viewName) {
       debug("Switch to view", viewName);
       DOMUtils.setWindowScrollTop(this.state.scrollTops[viewName]);
     }
 
     // Check if title has changed
-    var view = this.refs.view;
+    let view = this.refs.view;
     if (view && view.getTitle) {
-      var title = view.getTitle();
+      let title = view.getTitle();
       if (title !== this.state.title) {
         this.setState({title: title});
       }
     }
 
     if (prevState.title !== this.state.title && this.buildTitle) {
-      document.title = this.buildTitle(this.state.title);;
+      document.title = this.buildTitle(this.state.title);
     }
 
     if (this.state.windowScrollTop !== prevState.windowScrollTop) {
@@ -83,14 +84,13 @@ var RouterMixin = {
     }
   },
 
-  render: function() {
+  render() {
     switch (this.state.status) {
       case 'loading':
         if (this.renderLoading) {
           return this.renderLoading();
-        } else {
-          return null;
         }
+        break;
 
       case 'notFound':
         if (this.renderNotFound) {
@@ -98,6 +98,7 @@ var RouterMixin = {
         } else {
           return <h1>Not found</h1>;
         }
+        break;
 
       default:
         return this.renderView(
@@ -105,9 +106,11 @@ var RouterMixin = {
           this.state.viewName,
           this.state.viewParams);
     }
+
+    return null;
   },
 
-  onNotFound: function(event) {
+  onNotFound(event) {
     this.setState({
       viewName: null,
       scrollTop: 0,
@@ -115,10 +118,10 @@ var RouterMixin = {
     });
   },
 
-  onNavigate: function(event) {
-    var viewName = event.view;
+  onNavigate(event) {
+    let viewName = event.view;
 
-    var view = this.getRouteView(viewName);
+    let view = this.getRouteView(viewName);
     if (!view) {
       debug("Not showing a view for", viewName);
       this.setState({
@@ -129,7 +132,7 @@ var RouterMixin = {
       return;
     }
 
-    var newScrollTop;
+    let newScrollTop;
     if (this.shouldViewTrackScrollTop && this.shouldViewTrackScrollTop(viewName)) {
       newScrollTop = (event.scrollTop !== undefined && event.scrollTop !== null) ?
         event.scrollTop : this.state.scrollTops[viewName];
@@ -137,7 +140,7 @@ var RouterMixin = {
       newScrollTop = 0;
     }
 
-    var newScrollTops = _.clone(this.state.scrollTops);
+    let newScrollTops = clone(this.state.scrollTops);
     newScrollTops[viewName] = newScrollTop;
 
     this.setState({
@@ -172,4 +175,6 @@ var RouterMixin = {
 
 };
 
-module.exports = RouterMixin;
+export default RouterMixin;
+
+module.exports = RouterMixin;  // Backwards compatibility
