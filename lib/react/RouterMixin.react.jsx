@@ -77,10 +77,7 @@ let RouterMixin = {
     }
 
     if (this.state.windowScrollTop !== prevState.windowScrollTop) {
-      if (this._scrollTopTimeoutId) {
-        clearTimeout(this._scrollTopTimeoutId);
-      }
-      this._scrollTopTimeoutId = setTimeout(this._updateScrollTop, 250);
+      this._updateScrollTopState(this.state.windowScrollTop);
     }
   },
 
@@ -140,36 +137,33 @@ let RouterMixin = {
       newScrollTop = 0;
     }
 
-    let newScrollTops = clone(this.state.scrollTops);
-    newScrollTops[viewName] = newScrollTop;
+    let scrollTops = clone(this.state.scrollTops);
+    scrollTops[viewName] = newScrollTop;
 
     this.setState({
-      viewName: viewName,
+      viewName,
       viewComponent: view,
       viewParams: event.params,
       status: 'loaded',
-      scrollTops: newScrollTops
+      scrollTops
     });
   },
 
-  _handleWindowScroll: function(/* event */) {
-    this.setState({windowScrollTop: DOMUtils.getWindowScrollTop()});
+  _handleWindowScroll(/* event */) {
+    if (this._scrollTopTimeoutId) {
+      clearTimeout(this._scrollTopTimeoutId);
+    }
+    this._scrollTopTimeoutId = setTimeout(() => {
+      this.setState({windowScrollTop: DOMUtils.getWindowScrollTop()});
+    }, 500);
   },
 
-  _updateScrollTop: function() {
-    var y = this.state.windowScrollTop;
+  _updateScrollTopState(y) {
+    ApplicationDispatcher.action('reportScrollTop', {scrollTop: y});
 
-    ApplicationDispatcher.action('reportScrollTop', {
-      scrollTop: y
-    });
-
-    var viewName = this.state.viewName;
+    const viewName = this.state.viewName;
     if (viewName && y !== this.state.scrollTops[viewName]) {
-      var newScrollTops = _.clone(this.state.scrollTops);
-      newScrollTops[viewName] = y;
-      this.setState({
-        scrollTops: newScrollTops
-      });
+      this.setState({scrollTops: extend(clone(this.state.scrollTops), {[viewName]: y})});
     }
   }
 
