@@ -60,7 +60,13 @@ let RouterMixin = {
     let viewName = this.state.viewName;
     if (viewName !== prevState.viewName) {
       debug("Switch to view", viewName);
-      DOMUtils.setWindowScrollTop(this.state.scrollTops[viewName]);
+
+      // FIXME: This gives the UI a short grace period to render itself before we
+      //   we restore the scrolltop. This doesn't guarantee that the UI has fully
+      //   rendered.
+      setTimeout(function() {
+        DOMUtils.setWindowScrollTop(this.state.scrollTops[viewName]);
+      }.bind(this), 100);
     }
 
     // Check if title has changed
